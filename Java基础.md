@@ -82,19 +82,19 @@ while (res.next()) {
 
 （1）系统变量→新建 JAVA_HOME 变量 。
 
-![java_home](images\java_home.png)
+![java_home](images/java_home.png)
 
 （2）系统变量→寻找 Path 变量→编辑
 
 在变量值最后输入 %JAVA_HOME%\bin;%JAVA_HOME%\jre\bin;
 
-![path变量](images\添加到path变量.png)
+![path变量](images/添加到path变量.png)
 
 （3）系统变量→新建 CLASSPATH 变量
 
 变量值填写 .;%JAVA_HOME%\lib;%JAVA_HOME%\lib\tools.jar（注意最前面有一点）
 
-![classpath](images\classpath.png)
+![classpath](images/classpath.png)
 
 （4）打开startup
 
@@ -102,7 +102,7 @@ while (res.next()) {
 
 ##### 目录解析
 
-![目录](images\tomcat目录.png)
+![目录](images/tomcat目录.png)
 
 ##### 修改端口
 
@@ -189,7 +189,7 @@ conf -> server.xml
 
 5. 右键 Add and REmove -> 添加部署的项目到 servers
 
-![serverlocations](images\serverlocations.png)
+![serverlocations](images/serverlocations.png)
 
 #### jsp语法
 
@@ -228,7 +228,7 @@ contentType: 浏览器解析jsp的编码
     pageEncoding="utf-8" import="java.util.Date"%>
 ```
 
-![九大对象](images\jsp九大对象.png)
+![九大对象](images/jsp九大对象.png)
 
 ##### 编码
 
@@ -360,7 +360,7 @@ a.jsp
 ```
 
 
-![区别](images\cookie和session区别.png)
+![区别](images/cookie和session区别.png)
 
 ##### application对象
 
