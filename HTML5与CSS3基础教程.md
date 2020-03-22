@@ -1,3 +1,5 @@
+
+
 # HTML5 与 CSS3 基础教程
 
 ### 视频与音频标签
@@ -209,5 +211,110 @@ box-align:center;
 	</div>
 </body>
 </html>
+```
+
+
+
+### overflow内容溢出处理标签
+
+| 值      | 描述                                                       |
+| ------- | ---------------------------------------------------------- |
+| visible | 默认值。内容不会被修剪，会呈现在元素框之外                 |
+| auto    | **如果**内容被修剪，则浏览器会显示滚动条以便查看其余的内容 |
+| hidden  | 内容会被修剪，并且其余内容是不可见的                       |
+| scroll  | 内容会被修剪，但是浏览器会显示滚动条以便查看其余的内容。   |
+
+
+
+### resize调整元素内容大小标签
+
+属性规定是否可由用户调整元素的尺寸。
+
+| 值         | 描述                   |
+| ---------- | ---------------------- |
+| none       | 无法调整元素的尺寸     |
+| both       | 可调整元素的高度和宽度 |
+| horizontal | 可调整元素的宽度       |
+| vertical   | 可调整元素的高度       |
+
+
+
+### outline轮廓外边框标签
+
+用于为元素周围绘制轮廓外边框，可以起到突出元素的作用
+
+| 值              | 描述                                                         |
+| :-------------- | :----------------------------------------------------------- |
+| *outline-color* | 规定边框的颜色。参阅：[outline-color](https://www.runoob.com/cssref/pr-outline-color.html) 中可能的值。 |
+| *outline-style* | 规定边框的样式。参阅：[outline-style](https://www.runoob.com/cssref/pr-outline-style.html) 中可能的值。 |
+| *outline-width* | 规定边框的宽度。参阅：[outline-width](https://www.runoob.com/cssref/pr-outline-width.html) 中可能的值。 |
+| inherit         | 规定应该从父元素继承 outline 属性的设置。                    |
+
+
+
+### column多列布局
+
+column-ga: 在div元素的文本分成三列，并指定一个30像素的列之间的差距
+
+column-count: div元素的文本分成三列
+
+column-rule:  指定列之间的规则：宽度，样式和颜色
+
+```css
+-moz-column-count:3; /* Firefox */
+-webkit-column-count:3; /* Safari and Chrome */
+column-count:3;
+
+-moz-column-gap:40px; /* Firefox */
+-webkit-column-gap:40px; /* Safari and Chrome */
+column-gap:40px;
+
+-moz-column-rule:4px outset #ff00ff; /* Firefox */
+-webkit-column-rule:4px outset #ff00ff; /* Safari and Chrome */
+column-rule:4px outset #ff00ff;
+```
+
+
+
+
+### @media
+
+- 语法
+
+```css
+@media mediatype and|not|only (media feature) {
+    CSS-Code;
+}
+```
+
+mediatype:
+
+| 值     | 描述                                 |
+| ------ | ------------------------------------ |
+| all    | 用于所有设备                         |
+| print  | 用于打印机和打印预览                 |
+| screen | 用于电脑屏幕，平板电脑，智能手机等。 |
+
+media feature:
+
+| 值        | 描述                                   |
+| --------- | -------------------------------------- |
+| min-width | 定义输出设备中的页面最小可见区域宽度。 |
+| max-width | 定义输出设备中的页面最大可见区域宽度。 |
+
+- 定义电脑屏幕小于1000px的时候改变背景颜色为绿色
+- 定义所有设备大于300px的时候改变背景颜色为蓝色
+
+```css
+@media all and (min-width: 300px) {
+		#box{
+			background-color: red;
+		}
+	}
+@media screen and (max-width: 1000px) {
+		#box{
+			background-color: green;
+		}
+	}
 ```
 
