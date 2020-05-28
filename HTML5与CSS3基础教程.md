@@ -514,8 +514,8 @@ a[src$=".pdf"] {
 - X:nth-child(n)  表示父元素的第N个元素
 
   ```css
-  li:nth-child(n+5){
-      /*控制父元素的第五个元素开始到最后一个元素*/
+  li:nth-child(5){
+      /*控制li标签的第五个元素*/
   }
   ```
 
@@ -1053,6 +1053,12 @@ border-radius: 50%;
 box-shadow: x y 模糊度 阴影大小 颜色 是否内阴影;
 ```
 
+- 例子: 不错的阴影效果
+
+```css
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);//设置两层阴影
+```
+
 
 
 ### 列表list 样式
@@ -1087,3 +1093,218 @@ list-style-position: inside;
 - :active  鼠标长按状态
 - :visited   [ˈvɪzɪtɪd] 访问过的状态
 
+
+
+### 表单样式 form
+
+```html
+<form action="目标" method="提交的方式" enctype="编码的字符集" name="表单的唯一名称" target="哪种方式打开目标页面">
+</form>
+```
+
+```html
+enctype:  
+application/x-www-form-urlencoded: 默认的编码方式，发送目标前先编码
+multipart/form-date              : 编码成一条二进制，dz论坛的就是这个
+text/plain                       : 空格转换为+号，但不对特殊字符编码
+```
+
+#### 输入标签 input
+
+```html
+text       : 文本框
+password   : 密码框，会有星星符号
+hidden     : 隐藏域
+radio      : 单选框
+checkbox   : 多选框
+file       : 文本域
+image      : 图像域
+submit     : 提交
+reset      : 重置
+button     : 按钮，不会动，主要用于js
+```
+
+- 例子
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        span {
+            padding-left: 20px;
+            color: red;
+        }
+    </style>
+  </head>
+  <body>
+    <form action="目标.php" method="post">
+        用户名：<input type="text"><span>text</span><br>
+        
+        密 码：<input type="password"><span>password</span><br>
+        
+        性 别：<input type="radio">男
+               <input type="radio">女<span>单选框</span><br>
+        
+               兴 趣：<input type="checkbox">足球
+               <input type="checkbox">篮球
+               <input type="checkbox">棒球<span>多选框</span><br>
+        
+        选择文件：<input type="file" name="upfile" id="upfile"><span>file</span><br>
+        
+        图 片：<input type="image" src="https://www.baidu.com/favicon.ico"><span>image，点击会提交到action页面</span><br>
+        
+        <input type="reset" ><span>reset重置会情况form表单已填写的内容</span><br>
+        
+        <input type="submit"><span>submit提交会提交的action页面</span><br>
+       
+        <input type="button" value="按钮"> <span>button就是个按钮</span><br>
+        
+        <input type="hidden" name=""><span>hidden是隐藏内容，页面看不到，要源代码才看得到</span>
+    </form>
+  </body>
+</html>
+```
+
+#### 标签 label
+
+```html
+<label>用户名：</label>
+```
+
+#### 文本域 textarea
+
+```html
+<form>
+    <textarea></textarea>
+</form>
+```
+
+- 例子
+
+```html
+<form>
+    <textarea cols="50" row="5"></textarea><br>
+    <textarea cols="50" row="5" readonly="readonly">这个文本域是只读</textarea>
+</form>
+```
+
+
+
+#### 选择标签 select / option
+
+```html
+<form>
+    <select>
+    	<option value="bj">北京</option>
+        <option value="gd">广东</option>
+        <option value="va">form表单只能接收到value的值</option>
+	</select>
+</form>
+```
+
+#### 常用属性
+
+- formaction/formmethod
+
+> 实现一个表单两个提交地址
+
+```html
+<form action="">
+    <button formaction="login">登录</button>
+    <button formaction="regist">注册</button>
+</form>
+```
+
+```html
+<form action="a.php" method="get">
+    <button formmethod="get">get</button>
+    <button formmethod="post">post</button>
+</form>
+```
+
+- placeholder
+
+> 文本框里的提示文字
+
+```html
+<input type="text" placeholder="请输入用户名：">
+```
+
+- autocomplete
+
+> 自动补全的功能，默认是on表示开启
+
+```html
+<input type="text" placeholder="请输入用户名：" autocomplete="off">
+```
+
+- autofocus
+
+> 自动获取焦点
+
+```html
+<input type="text" placeholder="请输入用户名：" autofocus="autofocus">
+```
+
+- required
+
+> 提交前的必填字段
+
+```html
+<input type="text" placeholder="请输入用户名：" required="required">
+```
+
+
+
+### 动画效果
+
+#### 变形
+
+##### transform
+
+- translate
+
+```html
+translate(x, y):  元素水平方向移动x、y
+```
+
+- rotate
+
+```html
+rotate(angle):  顺时针旋转angle角度
+```
+
+- scale
+
+```html
+scale(x, y)
+如果省略y，那么会等比例缩放
+元素宽度缩放为x，高度缩放为y
+```
+
+- skew
+
+```
+skew(angleX, angleY)
+比如像 “箭头” 的效果
+元素沿着x轴倾斜angleX角度，沿着y轴倾斜angleY角度
+```
+
+- matrix
+
+```
+matrix(a, b, c, d, x, y):  旋转，缩放，移动，倾斜
+```
+
+##### transform-origin
+
+```
+transform-origin(x, y)  元素旋转的中心点,默认50% 50%
+x、y: left right center 长度 百分比
+```
+
+> cursor: 指定鼠标的样式
