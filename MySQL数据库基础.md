@@ -68,6 +68,14 @@
 create database[if not exists ]mytest[character set utf8mb4];
 ```
 
+设置默认创建数据库编码
+
+my.ini
+
+```
+character-set-server=utf8mb4
+```
+
 
 
 #### 删除数据库
@@ -108,7 +116,12 @@ CREATE TABLE table_name (列名 数据类型);
 - 实列1：创建tb_student表，里面包含id，name，sex，age列
 
 ```mysql
-create table tb_student(id int unsigned, name varchar(20), sex varchar(2), age int unsigned[COMMENT  '年龄']);
+create table tb_student(
+    id int unsigned,
+    name varchar(20),
+    sex varchar(2),
+    age int unsigned COMMENT  '年龄'
+);
 ```
 
 - 创建一个无符号的类型
@@ -123,21 +136,71 @@ create table aa(f1 tinyint, f2 int unsigned);
 create table newTable like oldTable;
 ```
 
-
-
-#### 修改表属性
-
-- 修改列名类型：将name列段修改成varchar类型
+- 例子：外键 级联更新、级联删除
 
 ```mysql
-alter table tb_student modify name varchar(15);
+create table tb_student(
+    id int unsigned,
+    mid int unsigned,
+    name varchar(20),
+    sex varchar(2),
+    age int unsigned COMMENT '年龄',
+    primary key(id, mid),
+    foreign key(mid) references tb_mark(mid) on delete cascade on update cascade
+);
 ```
 
 
-- 修改表名：将tb_grade表修改成tb_mark
+
+#### 修改表
+
+##### 修改表名
+
+```mysql
+alter table 表名 rename to 新表名;
+```
+
+- 例：将tb_grade表修改成tb_mark
 
 ```mysql
 alter table tb_grade rename to tb_mark;
+```
+
+
+
+##### 添加字段
+
+```mysql
+alter table 表名 add column 字段名 列类型[ after 字段名];
+after 表示添加到指定字段后面
+```
+
+- 例：添加edate字段到ename字段后面
+
+```mysql
+alter table tb_student add column edate date comment '入学日期' after sanme;
+```
+
+
+
+##### 删除字段
+
+```mysql
+alter table 表名 drop column 字段名;
+```
+
+
+
+##### 修改字段类型
+
+```mysql
+alter table 表名 modify 字段名 字段类型;
+```
+
+- 例：将name字段修改成varchar类型
+
+```mysql
+alter table tb_student modify name varchar(15);
 ```
 
 
@@ -201,7 +264,7 @@ delete from tb_studnet[where name='小明'];
 #### 更新数据
 
 ```mysql
-update tb_studnet set name='小红',age=19 where id=1920501;
+update tb_studnet set name='小红', age=19 where id=1920501;
 ```
 
 - 修改多个表    修改 t1 表id是1001的 f1 为 aa 表的 f1
@@ -227,6 +290,14 @@ select * from tb_student[where id<1920601];
 ```mysql
 SELECT DISTINCT CONCAT('User: ''',user,'''@''',host,''';') AS query FROM mysql.user;
 ```
+
+- 原型
+
+```mysql
+select user, host from mysql.user;
+```
+
+
 
 
 
@@ -267,9 +338,9 @@ drop user 'CJQ'@'localhost';
 ```sql
 show grants for root@localhost;  # 查看权限
 # 给予权限
-grant select, insert on tb_student to 'test1'@'localhost';
+grant select, insert on stumarkdb.tb_student to 'test1'@'localhost';
 # 收回权限
-revoke insert on tb_student from 'test1'@'localhost';
+revoke insert on stumarkdb.tb_student from 'test1'@'localhost';
 ```
 
 权限列表：
@@ -286,6 +357,52 @@ revoke insert on tb_student from 'test1'@'localhost';
 - dbName.*;               授予dbName数据库所有表的权限
 
 - dbName.dbTable;   授予数据库dbName中dbTable表的权限。
+
+
+
+#### mysql.user用户表详解
+
+##### host列
+
+| host      | 描述                                                         |
+| --------- | ------------------------------------------------------------ |
+| %         | 表示可以远程登录，并且是除服务器外的其他任何终端，%表示任意IP都可登录。 |
+| localhost | 只可以本机登录                                               |
+| 127.0.0.1 | 也是只可以本机登录                                           |
+| sv01      | 只能主机名为sv01的登录                                       |
+
+
+
+##### 权限列
+
+权限列决定了用户的权限，描述了用户在全局范围内允许对数据库和数据库表进行的操作，字段类型都是枚举Enum，值只能是Y或N，Y表示有权限，N表示没有权限。
+
+| 权限字段名称  | 备注说明                                                     |
+| ------------- | ------------------------------------------------------------ |
+| Select_priv   | 确定用户是否可以通过SELECT命令选择数据                       |
+| Insert_priv   | 确定用户是否可以通过INSERT命令插入数据                       |
+| Delete_priv   | 确定用户是否可以通过DELETE命令删除现有数据                   |
+| Update_priv   | 确定用户是否可以通过UPDATE命令修改现有数据                   |
+| Create_priv   | 确定用户是否可以创建新的数据库和表                           |
+| Drop_priv     | 确定用户是否可以删除现有数据库和表                           |
+| Reload_priv   | 确定用户是否可以执行刷新和重新加载MySQL所用各种内部缓存的特定命令,包括日志、权限、主机、查询和表重新加载权限表 |
+| Shutdown_priv | 确定用户是否可以关闭MySQL服务器在将此权限提供给root账户之外的任何用户时,都应当非常谨慎 |
+| Process_priv  | 确定用户是否可以通过SHOW PROCESSLIST命令查看其他用户的进程   |
+| File_priv     | 确定用户是否可以执行SELECT INTO OUTFILE和LOAD DATA INFILE命令 |
+
+
+
+##### 其它
+
+##### 权限列
+
+权限列决定了用户的权限，描述了用户在全局范围内允许对数据库和数据库表进行的操作，字段类型都是枚举Enum，值只能是Y或N，Y表示有权限，N表示没有权限。
+
+| 权限字段名称          | 备注说明                         |
+| --------------------- | -------------------------------- |
+| password_expired      | 密码是否过期                     |
+| password_last_changed | 上次修改密码的时间               |
+| account_locked        | 账号是否锁定，一般系统账号才锁定 |
 
 
 
@@ -333,7 +450,7 @@ revoke insert on tb_student from 'test1'@'localhost';
 
 
 
-### 常用约束
+### 约束
 
 | 名称                       | 说明                                                         |
 | -------------------------- | ------------------------------------------------------------ |
@@ -344,6 +461,43 @@ revoke insert on tb_student from 'test1'@'localhost';
 | DEFAULT '男'               | 默认值                                                       |
 | UNIQUE                     | 唯一但可空，一个表可以用多个                                 |
 | COMMENT                    | 备注                                                         |
+
+
+
+#### 创建/删除约束
+
+1. 创建表时创建
+2. 使用alter
+
+- 主键约束
+
+```mysql
+alter table 表名 add primary key(字段);  -- 创建主键约束
+alter table 表名 drop primary key;       -- 删除主键约束
+```
+
+- 外键约束
+
+```mysql
+alter table 表名 add constraint 外键约束名 foreign key(字段名) references 另一个表(另一个表的列);  -- 创建外键约束
+alter table 表名 drop foreign key 外键约束名;  -- 删除外键约束
+```
+
+- 非空约束
+
+```mysql
+alter table 表名 modify 列名 数据类型 not null;  -- 创建非空约束
+alter table 表名 modify 列名 数据类型 null;      -- 删除非空约束
+```
+
+- 唯一约束
+
+```mysql
+alter table 表名 add unique 约束名(字段);
+alter table 表名 drop key 约束名;
+```
+
+
 
 #### 修改约束
 
@@ -357,7 +511,14 @@ alter table 表名 add CONSTRAINT 约束(列名);
   alter table 表名 add constraint primary key(f2);
   ```
 
-  
+
+
+
+#### 查看约束
+
+```mysql
+show create table 表名;
+```
 
 
 
@@ -684,7 +845,7 @@ select * from ani_video group by(bid) having bid > 20190000;
 
 #### 连接查询 join
 
-- [inner] join 内连接
+##### [inner] join 内连接
 
 两个表中字段匹配关系的记录
 
@@ -698,7 +859,7 @@ on s.sno = m.sno;
 
 
 
-- left [outer] join 左连接
+##### left [outer] join 左连接
 
 获取左表所有记录，即使右表没有对应匹配的记录。
 
@@ -710,7 +871,7 @@ on s.sno = m.sno;
 
 
 
-- right [outer] join 右连接
+##### right [outer] join 右连接
 
 与 LEFT JOIN 相反，用于获取右表所有记录，即使左表没有对应匹配的记录。
 
@@ -718,6 +879,20 @@ on s.sno = m.sno;
 select s.*, m.*
 from tb_student s right outer join tb_mark m
 on s.sno = m.sno;
+```
+
+
+
+##### 多表连接
+
+```
+select * from (表1 join 表2) join 表3;
+```
+
+```mysql
+select s.sno 学号, s.sname 姓名, s.ssex 性别, c.cno 课程号, c.cname 课程名, c.credit 学分, m.grade 成绩
+from (tb_student s join tb_mark m on s.sno=m.sno) join tb_course c
+on c.cno=m.cno;
 ```
 
 
@@ -1063,6 +1238,20 @@ show create procedure 存储过程名;
 
 #### 存储过程参数
 
+##### 定义变量
+
+```mysql
+declare 变量名 变量类型 [约束];
+```
+
+- 例
+
+```mysql
+declare ii int default 10;
+```
+
+
+
 - 获取学生总数
 
 ```mysql
@@ -1309,8 +1498,242 @@ delimiter ;
 call get_details6('张宇', @res_sub, @res_cou);
 
 select @res_sub, @res_cou;
+```
 
 
 
+```mysql
+-- drop procedure get_details;
+delimiter //
+create procedure get_details(in name varchar(10), out res_sal int, out res_dname varchar(30))
+begin
+  declare status int;
+  select COUNT(*) into status from emp where ename = name;
+	if status = 1 then select e.sal, d.dname into res_sal, res_dname from emp e join dept d on e.deptno = d.deptno where e.ename = name; 
+	elseif status >= 2 then select -1, "此姓名有重名员工" into res_sal, res_dname;
+	else select 0, "不存在此员工" into res_sal, res_dname;
+	end if;
+end//
+delimiter ;
+
+call get_details('张三', @res_sal, @res_dname);
+select @res_sal, @res_dname;
+```
+
+
+
+
+
+### 函数
+
+#### concat()
+
+> 字符串拼接函数
+
+```
+concat(str1[, str2, str3]);
+```
+
+
+
+#### replace()
+
+> 字符串替换函数
+
+```
+replace(字符串, 被替换的字符串, 替换的字符串);
+```
+
+
+
+#### substring()
+
+> 截取子串函数
+
+```
+substring(字符串, 截取位置[, 截取长度]);
+如果不填截取长度就从截取位置截到最后
+```
+
+
+
+#### ceiling()
+
+> 向上取整函数
+
+```
+ceilling(数字);
+```
+
+
+
+
+
+#### floor()
+
+> 向下取整函数
+
+```
+floor(数字);
+```
+
+
+
+
+
+#### rand()
+
+> 随机数函数，0-1的小数
+
+
+
+
+
+#### round()
+
+> 四舍五入函数
+
+- 例子：随机0-20
+
+```mysql
+delimiter //
+create procedure rand_number()
+begin
+  declare i int;
+  set i = 0;
+	while i < 20 do
+	  select floor(rand()*100);
+		set i = i + 1;
+	end while;
+end//
+delimiter ;
+
+call rand_number();
+```
+
+
+
+#### current_date()
+
+> 当前日期函数
+
+
+
+#### cureent_time()
+
+> 当前时间函数
+
+
+
+### 触发器trigger
+
+#### 创建触发器
+
+```mysql
+create trigger 触发器名 trigger_time trigger_event on 表名 for each row trigger_stmt
+
+trigger_time:   触发时机：after / before
+trigger_event:  触发事件：insert / delete /update
+for each row:   匹配每一次触发
+trigger_stmt:   触发器结构体
+```
+
+```mysql
+delimiter //
+create trigger 触发器名 after/before insert/delete/update on 表名 for each row
+begin
+  -- code
+end //
+delimiter ;
+```
+
+- 例子：添加员工时，部门人数+1
+
+```mysql
+delimiter //
+create trigger tri_peoinsert after insert on emp for each row
+begin
+  declare dcu int;
+  set dcu = (select dcount from dept where deptno = new.deptno);
+  update dept set dcount = dcu + 1 where deptno = new.deptno;
+end //
+delimiter ;
+
+insert into emp VALUE(15, "流星", "2018-6-9", "男", 11000, "市场人员", "d003");  -- 测试添加
+```
+
+- 例子：修改员工部门时，旧部门人数-1，新部门人数+1
+
+```mysql
+delimiter //
+create trigger tri_Update after update on emp for each row
+begin
+  update dept set dcount = dcount - 1 where deptno = old.deptno;
+  update dept set dcount = dcount + 1 where deptno = new.deptno;
+end //
+delimiter ;
+
+update emp set sal = 12000, job = "新职业", deptno = 'd001' where id = 13;
+```
+
+- 例子：删除员工时，部门人数-1
+
+```mysql
+delimiter //
+create trigger tri_Delete after update on emp for each row
+begin
+  update dept set dcount = dcount - 1 where deptno = old.deptno;
+end //
+delimiter ;
+
+delete from emp where id = 13;
+```
+
+
+
+#### 删除触发器
+
+```
+dorp trigger 触发器名;
+```
+
+
+
+#### 查看触发器
+
+```mysql
+show triggers;
+```
+
+
+
+### 备份与恢复
+
+#### 系统自带备份命令
+
+- 例子：备份hrdb数据库
+
+```mysql
+mysqldump -uroot -proot hrdb>hrdbBak.sql;
+```
+
+- 例子：备份hrdb数据库的emp表
+
+```mysql
+mysqldump -uroot -proot hrdb emp > empBak.sql;
+```
+
+- 例子：备份全部数据库
+
+```mysql
+mysqldump -uroot -proot --all-database > all.sql;
+```
+
+
+
+#### 系统自带恢复命令
+
+```
+source xxx.sql;
 ```
 

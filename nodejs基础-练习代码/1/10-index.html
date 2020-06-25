@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>nodejs 的art-template</title>
+</head>
+<body>
+<h3>author : {{name}}</h3>
+	<h4>age    : {{ age }}</h4>
+	hobbies: 
+	<ul>
+		{{each hobbies}}
+			<li>{{ $value }}</li>
+		{{ /each }}
+	</ul>
+</body>
+</html>

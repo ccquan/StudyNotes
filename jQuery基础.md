@@ -568,6 +568,14 @@ $('#uname').focus(function() {
 
 
 
+#### jQuery重定向
+
+```javascript
+$(location).attr('href', '/');
+```
+
+
+
 #### 窗口事件
 
 ##### 滚动条 scroll()
@@ -1137,7 +1145,7 @@ $(选择器).toggleClass(类别名);     切换类别样式，有就去除，没
 
 ### jQuery动画
 
-#### 显示隐藏动画
+#### 显示隐藏动画/元素
 
 ```
 $(选择器).hide(speed, callback);
@@ -1147,6 +1155,8 @@ $(选择器).toggle(speed, callback);
 speed:    隐藏/显示/切换 的速度,毫秒为单位
 callback: 执行完后的回调函数
 ```
+
+
 
 ##### 遮罩层-登录框
 
@@ -1693,6 +1703,36 @@ $(document).ready(function() {
         }
     );
 });
+```
+
+
+
+### jQuery获取表单值
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<title>表单jQuery获取数据</title>
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	
+</head>
+<body>
+	<form id="register_form" action="/register" method="post">
+		<input type="text" name="email">
+		<input type="text" name="username">
+		<input type="password" name="pwd">
+		<button type="submit">提交</button>
+	</form>
+	<script type="text/javascript">
+		$('#register_form').on('submit', function(e) {
+			e.preventDefault();
+			var formDate = $(this).serialize();
+			console.log(formDate);
+		});
+	</script>
+</body>
+</html>
 ```
 
 

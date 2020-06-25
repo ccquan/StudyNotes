@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>表单jQuery获取数据</title>
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	
+</head>
+<body>
+	<form id="register_form" action="/register" method="post">
+		<input type="text" name="email">
+		<input type="text" name="username">
+		<input type="password" name="pwd">
+		<button type="submit">提交</button>
+	</form>
+	<script type="text/javascript">
+		$('#register_form').on('submit', function(e) {
+			e.preventDefault();
+			var formDate = $(this).serialize();
+			console.log(formDate);
+		});
+	</script>
+</body>
+</html>

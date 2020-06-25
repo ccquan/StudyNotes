@@ -4,7 +4,7 @@
 
 - 区分大小写
 - 无特定的类型
-- 结尾的分号(;) 可有可无
+- 结尾的分号(;) 可有可无，除了*( [ `* 这三个开头的语句
 - 注释  
 
 ```javascript
@@ -59,19 +59,36 @@ console.log(b);  // 错误，let是块级作用域
 
 - const  定义的是常量，作用域：同一块
 
+#####  ${变量名} 
+
+> 在es6的 ` 字符串中，可以使用 ${变量名} 引入变量
+
+```javascript
+var author = '红楼梦·第九十一回';
+var longstr = 
+`弱水三千，我只取一瓢饮。
+                     by:${author}`;
+console.log(longstr);
+```
+
 
 
 ### 基本数据类型
 
-- String  字符串
+#### String  字符串
 
 ```javascript
 // 没有char类型，只有字符串类型,单引号双引号都一样
 var str = "双引号";
 var str2 = '单引号';
+var longstr = `
+<?php
+    echo 'hello world';
+?>
+`;
 ```
 
-- Number  数值型
+#### Number  数值型
 
 ```javascript
 // 不区分整型或浮点型
@@ -80,7 +97,7 @@ var num2 = 070;  // 前面零(0)开头表示八进制
 var num3 = 0x1f; // 前面零x(0x)开头表示十六进制
 ```
 
-- Boolean 布尔型
+#### Boolean 布尔型
 
 ```javascript
 var b = true/false;
@@ -312,6 +329,14 @@ var myarr = ["v1", "v2", "v3"];
 myarr.splice(索引位置, 删除个数);
 ```
 
+- 例：
+
+```javascript
+var myarr = ["v1", "v2", "v3"];
+myarr.splice(1, 1);
+// 得到["v1", "v3"]
+```
+
 
 
 ##### 遍历元素
@@ -333,6 +358,34 @@ var myarr = ["v1", "v2", "v3"];
 for (key in myarr) {
     console.log(myarr[key]);
 }
+```
+
+
+
+##### 查找元素
+
+| 属性                | 描述                                       |
+| ------------------- | ------------------------------------------ |
+| findIndex(callback) | 根据值查找元素，返回元素下标，未找到返回-1 |
+
+- 例： 查找值为3的下标是多少，
+
+```javascript
+var arr = [2,3,4,5];
+var arrInd = arr.findIndex(function(ind) {
+    return ind === 3;
+});
+```
+
+- 例：查找对象name属性的值是tom的下标是多少
+
+```javascript
+var stu = [{"id":1,"name":"tim","sex":"男","age":22,"class":"19软件5班级"}, 
+        {"id":2,"name":"tom","sex":"男","age":20,"class":"19软件1班级"},
+        {"id":3,"name":"john","sex":"男","age":21,"class":"19软件3班级"}];
+var stuInd = stu.findIndex(function(itemObj) {
+    return itemObj.name === 'tom';
+});
 ```
 
 
@@ -680,6 +733,36 @@ for (var key in u2) {
 
 
 
+#### JSON
+
+> JavaScript object notation
+
+
+
+##### JSON.stringify()
+
+> 将json对象转换为字符串
+
+```javascript
+var list = {'uname': 'root', 'pwd': 'toor', 'age': 22};
+var tostring = JSON.stringify(list);
+console.log(tostring);
+```
+
+
+
+##### JSON.parse()
+
+> 将json字符串解析成json对象
+
+```javascript
+var str = '{"uname":"root","pwd":"toor","age":22}';
+var tojson = JSON.parse(str);
+console.log(tojson);
+```
+
+
+
 ### 函数
 
 #### 语法
@@ -862,15 +945,42 @@ setInterval 是循环执行的，停止使用：windows.clearInterval() 方法
 
 setTimeout 只执行一遍
 
-- 例子
+1.  匿名函数
+
+```javascript
+setInterval(function() {
+    console.log(1);
+}, 1000);
+```
+
+2.  自定义函数
+
+```javascript
+function print() {
+    console.log(2);
+}
+setInterval(print, 2000);  // print不用带括号：setInterval(print(), 2000);
+```
+
+3.  带参数
 
 ```javascript
 function echo(n) {
     console.log(n);
 }
 
-setInterval(echo(2), 1000);
-setTimeout(echo(3), 1000);
+setInterval("echo(2)", 1000);  // 如果带参数的话要字符串型
+setTimeout("echo(3)", 1000);
+```
+
+4. 停止定时器
+
+```javascript
+function print() {
+    console.log(2);
+}
+var myVar = setInterval(print, 2000);  // 要给定时器一个变量名
+clearInterval(myVar);
 ```
 
 
@@ -1375,6 +1485,8 @@ element.removeChild(节点);
 
 #### 属性操作
 
+##### 获取元素节点
+
 ```javascript
 element.parentNode;  // 返回当前元素的父节点
 element.children;    // 返回子元素节点，只返回html节点
@@ -1383,11 +1495,19 @@ element.firstChild;  // 返回第一个子元素
 element.lastChild;   // 返回最后一个子元素
 ```
 
+
+
+##### 获取元素内容
+
 ```javascript
 element.nextElementSibling;  // 返回同级元素
 element.innerHtml;           // 返回元素html代码
 element.innnerText;          // 返回元素文本类容
 ```
+
+
+
+##### css样式
 
 ```javascript
 node.nodeType;      // 返回当前节点类型
@@ -1625,6 +1745,43 @@ window.onload = function() {
 
 
 ### 鼠标
+
+- 鼠标点击事件
+
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>js中的点击事件（click）的实现方式</title>
+</head>
+<body>
+    <!-- 第三种方式-->
+    <button id="btn" onclick="threeFn()">点我</button>
+
+    <script type="text/javascript">
+        var btn = document.getElementById("btn");
+
+        // 第一种 通过点击事件
+        btn.onclick = function(){
+            alert("这是第一种点击方式");
+        }
+
+        // 第二种 监听点击事件
+        btn.addEventListener('click', function(){
+            alert("这是第二中点击方式");
+        })
+
+        // 第三种 通过方法响应点击事件
+        function threeFn(){
+            alert("这是第三种点击方式");
+        }
+    </script>
+</body>
+</html>
+```
+
+
 
 - 获取鼠标点击时的x，y
 
