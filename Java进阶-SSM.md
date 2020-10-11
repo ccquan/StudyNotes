@@ -3898,7 +3898,7 @@ IdeaProjects\SSM\itcast_health
 
 #### 项目结构
 
-![image-20201002164254636](images\Java进阶-SSM\image-20201002164254636.png)
+![image-20201002164254636](images/Java进阶-SSM/image-20201002164254636.png)
 
 
 
