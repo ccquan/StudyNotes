@@ -1480,7 +1480,9 @@ params:  json自定义css样式例如：{height:'200px'}
 
 
 
-### Ajax
+### Ajax&JSON
+
+asynchronous JavaScript and xml 异步的JavaScript和xml
 
 #### 原生写法
 
@@ -1606,7 +1608,7 @@ xhr.onreadystatechange = function() {
 $.ajax({
     url: '目标.php',
     type: 'post',
-    data: 'uname=root&pwd=root',
+    data: {'username': name, 'pwd': pwd},
     dataType: 'text',
     success: function(res) {
         // 成功后的执行的函数
@@ -1670,6 +1672,18 @@ dataType:  服务器返回的格式 xml、html、json
 
 
 
+##### 将表单的值转为字符串键值对
+
+serialize()可以转成：`username=Tom&passowrd=tom888`
+
+```javascript
+$.post('RegisterUserServlet', $(this).serialize(), function (data) {
+    console.log(data);
+}, "json");
+```
+
+
+
 #### 跨域
 
 1. 
@@ -1703,6 +1717,72 @@ $(document).ready(function() {
         }
     );
 });
+```
+
+
+
+#### json
+
+JavaScript object notation
+
+
+
+构成规则：`{键: 值}` ，键可以用引号，也可以不用引号
+
+#### 取值类型
+
+- 数字
+- 字符串
+- 逻辑值：true/false
+- 数组（方括号）： `{'people': ['张三', '李四']}`
+- 对象（花括号）：`{'people': {'name': '张三', 'age': 18, 'gender': '男'}}`
+- null
+
+
+
+#### 遍历json
+
+- jQuery遍历
+
+$(json数据).each();   this表示当前遍历的数据
+
+```javascript
+$.get('${pageContext.request.contextPath}/ProvinceServlet', function (data) {
+    console.log(data)
+    var cn_city = $('#cn_city');
+    $(data).each(function () {
+        var option = '<option value="' + this.id + '">' + this.name + '</option>';
+        cn_city.append(option);
+    });
+}, 'json');
+```
+
+
+
+- 遍历单个
+
+```javascript
+var p1 = {'name': '小儿', 'age': 15, 'gender': '男'};
+
+for (var key in p1) {
+    console.log(key + "--" + p1[key]);  // p1.key是不行的
+}
+```
+
+- 遍历嵌套
+
+```javascript
+var p2 = [
+    {'name': '张三', 'age': 18, 'gender': '男'},
+    {'name': '李四', 'age': 20, 'gender': '男'}
+];
+
+for (var i = 0; i < p2.length; i++) {
+    var p = p2[i];
+    for (var key in p) {
+        console.log(key + "--" + p[key]);
+    }
+}
 ```
 
 
@@ -1742,15 +1822,37 @@ $(document).ready(function() {
 #### 链式编程
 
 > 链式编程就是一个元素调用一个方法，这个方法有返回值，而且返回的是一个jQuery对象，那就可以继续在点出jQuery方法
+>
+> 这样的好处是简化下面的操作或者回到之前的状态
+>
+> $(同一个元素).width(100);
+>
+> $(同一个元素).height(100);
+>
+> $(同一个元素).css('backgroundColor', 'red');
+
+
+
+- 例：设置div的宽度后再次设置高度再次设置css样式
 
    ```javascript
-列：$('div').widht(100).height(100).css('backgroundColor', 'red');
+$('div').widht(100).height(100).css('backgroundColor', 'red');
    ```
 
-1. end()  返回上一个状态，注意：.end()需要jQuery对象
+- 例：end()  返回上一个状态，注意：.end()需要jQuery对象
 
 ```javascript
 $(this).text(shi).prevAll().text(shi).end().nextAll().text(kong);  //返回到$(this)这里
+```
+
+- 例：点击后消失，然后再次出现，然后再次消失
+
+```javascript
+$(document).ready(function () {
+    $("#close").click(function () {
+        $("#adv").hide(1000).show(2000).hide(800);
+    });
+});
 ```
 
 
@@ -1878,7 +1980,3 @@ $.fn.jquery
         }
     }(window.jQuery));
     ```
-
-    
-
-    

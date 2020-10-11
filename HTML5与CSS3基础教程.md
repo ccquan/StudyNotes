@@ -684,6 +684,8 @@ text-align: left, right, center, justify
 vertical-align: top, middle, bottom
 ```
 
+
+
 #### 引用字体
 
 ```css
@@ -695,6 +697,8 @@ vertical-align: top, middle, bottom
     font-family: "FZJZJW";
 }
 ```
+
+
 
 #### 文字效果
 
@@ -723,6 +727,8 @@ overflow: hidden;
 
 > white-space:规定段落中的文本不进行换行
 
+
+
 #### 空格处理white-space
 
 | --       | --                                     |
@@ -731,6 +737,8 @@ overflow: hidden;
 | pre      | 原格式                                 |
 | nowrap   | 合成一行，遇到\<br\>结束               |
 | pre-wrap | 原样输出，如果有规定宽高会换行         |
+
+
 
 #### 换行处理word-wrap
 
@@ -767,11 +775,15 @@ none:无图片
 url(图片位置): 设置背景图片
 ```
 
+
+
 #### 多张图片做背景
 
 ```css
 background:url(图片1) no repeat, url(图片2) no repeat;
 ```
+
+
 
 #### 背景图片重复样式 background-repeat
 
@@ -783,6 +795,8 @@ repeat-x：只向左右重复
 repeat-y：只向上下重复
 ```
 
+
+
 #### 背景图片固定 background-attachment
 
 ```css
@@ -790,12 +804,16 @@ scroll：会随着滚动条的滚动而滚动，默认
 fixed：保持固定，滚动条怎么滚动都不会跟着滚动
 ```
 
+
+
 #### 背景定位 background-position
 
 ```css
 x:top/left/right/bottom/center/0%/50%/0
 y:top/left/right/bottom/center/0%/50%/0
 ```
+
+
 
 #### 背景图片定位显示区域 background-origin
 
@@ -805,6 +823,8 @@ border-box	背景图像从外边框那里相对定位
 content-box	背景图像的从内容那里相对定位
 ```
 
+
+
 #### 背景图片裁剪 background-clip
 
 ```css
@@ -812,6 +832,8 @@ border-box:  裁剪成边框方框(显示成内容+内边距+外边距)
 padding-box:  裁剪成衬距方框(也就是显示成内容+内边距)
 content-box:  裁剪成内容方框(也就是显示成内容)
 ```
+
+
 
 #### 背景图像大小 background-size
 
@@ -827,11 +849,11 @@ background-size: 80px 60px;
 background-size: 50% 50%;  如果归属于div且指定宽高，是按div的百分比
 ```
 
+
+
 ### 渐变
 
 > ie10以上
-
-
 
 #### 线性渐变 linear-gradient
 
@@ -860,6 +882,10 @@ background-image: linear-gradient(to top, red, yellow);  // 红色下往上黄�
 
 > **由它们的中心定义**
 
+```css
+background-image: radial-gradient(形状 渐变大小 at 位置, 开始颜色, ..., 结束颜色);
+```
+
 | 值                             | 描述                     |
 | :----------------------------- | :----------------------- |
 | *shape*                        | 确定圆的类型             |
@@ -874,18 +900,40 @@ background-image: linear-gradient(to top, red, yellow);  // 红色下往上黄�
 
 - size
 
-1. farthest-corner ：指定径向渐变的半径长度为从圆心到离圆心最远的角 (默认)
-2. closest-side ：指定径向渐变的半径长度为从圆心到离圆心最近的边
-3. closest-corner ： 指定径向渐变的半径长度为从圆心到离圆心最近的角
-4. farthest-side ：指定径向渐变的半径长度为从圆心到离圆心最远的边
+1. farthest-corner ： 圆心到最远的那个角 (默认)
+2. farthest-side ：     圆心到最远的那个边
+3. closest-corner ：  圆心到最近的那个角
+4. closest-side ：      圆心到最近的那条边
 
-- position
+- position，可以分开定义x和y，也可以百分比、像素等单位
 
-center：（默认）、top  、botton
+center：（默认）、top  、botton、left
+
+- 例1
 
 ```css
 background-image: radial-gradient(red 5%, green 15%, blue 60%);
 ```
+
+- 例2
+
+```css
+background-image: radial-gradient(circle farthest-corner at 60% 55%, red, #66ccff );
+```
+
+
+
+- transparent：透明度
+
+
+
+#### after
+
+```html
+
+```
+
+
 
 
 
@@ -1262,23 +1310,49 @@ button     : 按钮，不会动，主要用于js
 
 ### 动画效果
 
-#### 变形
+#### 变形transform
 
-##### transform
-
-- translate
+##### translate
 
 ```html
 translate(x, y):  元素水平方向移动x、y
 ```
 
-- rotate
+- translateX ：只向X移动
+- translateY ：只向Y移动
+
+- 例：X移动100像素Y移动200像素
+
+```css
+transform: translate(100px, 200px)
+```
+
+- translate3d(x, y, z) ：3D位移
+- 例：
+
+```css'
+transform: translate3d(30px, 30px, 200px)
+```
+
+
+
+##### rotate
 
 ```html
 rotate(angle):  顺时针旋转angle角度
 ```
 
-- scale
+- 整数：顺时针
+- 负数：逆时针
+- 例：新房45度
+
+```css
+transform: rotate(45deg)
+```
+
+
+
+##### scale
 
 ```html
 scale(x, y)
@@ -1286,7 +1360,19 @@ scale(x, y)
 元素宽度缩放为x，高度缩放为y
 ```
 
-- skew
+- 0.01~0.99 缩小
+
+- 1.01~∞  放大
+
+- 例：X和Y同时放大1.25倍
+
+```css
+transform: scale(1.25)
+```
+
+
+
+##### skew
 
 ```
 skew(angleX, angleY)
@@ -1294,7 +1380,9 @@ skew(angleX, angleY)
 元素沿着x轴倾斜angleX角度，沿着y轴倾斜angleY角度
 ```
 
-- matrix
+
+
+##### matrix
 
 ```
 matrix(a, b, c, d, x, y):  旋转，缩放，移动，倾斜
@@ -1308,3 +1396,9 @@ x、y: left right center 长度 百分比
 ```
 
 > cursor: 指定鼠标的样式
+
+
+
+#### 3D转换transform-style
+
+让转换的子元素保留3D转换
