@@ -573,7 +573,7 @@ create table emp(
 
 示例表：
 
-![示例图](images/MySQL范式解析示例图.png)
+![示例图](images/MySQL数据库基础/MySQL范式解析示例图.png)
 
 #### 第一范式
 
@@ -604,7 +604,7 @@ create table emp(
 
 **经过第二范式后得到的表：**
 
-![第二范式后](images/MySQL范式解析第二范式.png)
+![第二范式后](images/MySQL数据库基础/MySQL范式解析第二范式.png)
 
 
 
@@ -614,7 +614,7 @@ create table emp(
 
 **经过第三范式后得到的表：**
 
-![第三范式后](images/MySQL范式解析第三范式.png)
+![第三范式后](images/MySQL数据库基础/MySQL范式解析第三范式.png)
 
 
 
@@ -964,7 +964,7 @@ on c.cno=m.cno;
 
 #### 小结
 
-![image-20200412141412370](images/mysql查询顺序.png)
+![image-20200412141412370](images/MySQL数据库基础/mysql查询顺序.png)
 
 
 

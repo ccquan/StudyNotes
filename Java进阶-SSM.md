@@ -582,7 +582,7 @@ jdbc.driverClassName = com.mysql.cj.jdbc.Driver
 
 ### Spring原始注解
 
-![](images/Spring原始注解.png)
+![](images/Java进阶-SSM/Spring原始注解.png)
 
 
 
@@ -700,7 +700,7 @@ public class UserServiceImpl implements UserService {
 
 > 一些像context、数据库配置的信息用原始注解处理不了
 
-![image-20200723104907191](images/Spring新注解.png)
+![image-20200723104907191](images/Java进阶-SSM/Spring新注解.png)
 
 1. config/SpringConfiguration.java
 
@@ -818,7 +818,7 @@ public class SpringTest {
 
 - 优势：减少重复代码，提高开发效率，并且便于维护
 
-![image-20200723164056093](images/aop原始步骤.png)
+![image-20200723164056093](images/Java进阶-SSM/aop原始步骤.png)
 
 
 
@@ -918,7 +918,7 @@ save run...
 
 #### 通知(增强)的类型
 
-![image-20200723224056081](images/aop通知的类型.png)
+![image-20200723224056081](images/Java进阶-SSM/aop通知的类型.png)
 
 
 
@@ -1989,8 +1989,6 @@ public void req5(@PathVariable(value = "userId") String userId) {
 
 
 
-
-
 #### 自定义转换器
 
 SpringMVC中有对日期的参数做转换，但不是全格式的例如`2019-02-63`这种格式转换不了，所有就可以自己制作一个转换器
@@ -2076,7 +2074,7 @@ public void req9(@CookieValue(value = "token") String token) {
 
 #### 文件上传
 
-![image-20200728110858480](images/form表单文件上传原理.png)
+![image-20200728110858480](images/Java进阶-SSM/form表单文件上传原理.png)
 
 1. 导入文件上传需要的坐标
 
@@ -3860,7 +3858,7 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 
 ### 目录结构
 
-![image-20200803103828868](images/ssm目录结构.png)
+![image-20200803103828868](images/Java进阶-SSM/ssm目录结构.png)
 
 UserMapper.java
 
@@ -5120,7 +5118,7 @@ public class App {
 
 
 
-#### 注意事项
+#### 各种坑
 
 - mybatis参数是String
 
@@ -5134,6 +5132,17 @@ public class App {
             where name = #{value} or code = #{value}
         </if>
     </select>
+```
+
+- health_Mobile添加servlet依赖要加范围标签`scope`
+
+```xml
+<dependency>
+  <groupId>javax.servlet</groupId>
+  <artifactId>javax.servlet-api</artifactId>
+  <version>4.0.1</version>
+  <scope>provided</scope>
+</dependency>
 ```
 
 
@@ -5226,3 +5235,439 @@ new HWPFWorkbook();  // 创建word对象
         sheets.write(out);  // 将excel对象写出到文件对象去
         out.flush();  // 刷新
 ```
+
+
+
+#### Mybatis多表查询
+
+- 案例：获取一个“套餐”数据，“套餐”数据里面有多个“检查组”，一个“检查组”里面有多个“检查项”
+
+套餐类：
+
+```java
+private Integer id;
+private String name;
+private String code;
+private String helpCode;
+private String sex;//套餐适用性别：0不限 1男 2女
+private String age;//套餐适用年龄
+private Float price;//套餐价格
+private String remark;
+private String attention;
+private String img;//套餐对应图片存储路径
+private List<CheckGroup> checkGroupList;  // 体检套餐对应的检查组
+```
+
+检查组类：
+
+```java
+private Integer id;//主键
+private String code;//编码
+private String name;//名称
+private String helpCode;//助记
+private String sex;//适用性别
+private String remark;//介绍
+private String attention;//注意事项
+private List<CheckItem> checkItemList;  // 包含的检查项
+```
+
+检查项类：
+
+```java
+private Integer id;//主键
+private String code;//项目编码
+private String name;//项目名称
+private String sex;//适用性别
+private String age;//适用年龄（范围），例如：20-50
+private Float price;//价格
+private String type;//检查项类型，分为检查和检验两种类型
+private String remark;//项目说明
+private String attention;//注意事项
+```
+
+1. 套餐
+
+Service.java
+
+```java
+@Override
+public Setmeal findMobileOneById(Integer id) {
+    // mybatis多表
+    return setMealDao.testFindOneById(id);
+}
+```
+
+Dao.java
+
+```java
+public Setmeal findMobileOneById(Integer id);
+```
+
+Dao.xml
+
+```xml
+<!--测试多表查询-->
+<resultMap id="testFindCheckGroupsBySetMealId" type="com.itheima.POJO.Setmeal">
+    <id column="id" property="id"/>
+    <id column="name" property="name"/>
+    <id column="code" property="code"/>
+    <id column="helpCode" property="helpCode"/>
+    <id column="sex" property="sex"/>
+    <id column="age" property="age"/>
+    <id column="price" property="price"/>
+    <id column="remark" property="remark"/>
+    <id column="attention" property="attention"/>
+    <id column="img" property="img"/>
+    <collection property="checkGroupList"
+                javaType="ArrayList"
+                ofType="com.itheima.POJO.CheckGroup"
+                column="id"
+                select="com.itheima.dao.CheckGroupDao.findCheckGroupsBySetMealId"/>
+</resultMap>
+
+<select id="testFindOneById" parameterType="integer" resultMap="testFindCheckGroupsBySetMealId">
+    select * from t_setmeal where id = #{id}
+</select>
+```
+
+
+
+2. 检查组
+
+Dao.java
+
+```java
+// 测试多表
+public List<CheckGroup> findCheckGroupsBySetMealId(Integer setMealId);
+```
+
+Dao.xml
+
+```java
+<!--测试多表-->
+<resultMap id="testFindCheckItemsByCheckGroupId" type="com.itheima.POJO.CheckGroup">
+    <id column="id" property="id" />
+    <id column="code" property="code"/>
+    <id column="name" property="name"/>
+    <id column="helpCode" property="helpCode"/>
+    <id column="sex" property="sex"/>
+    <id column="remark" property="remark"/>
+    <id column="attention" property="attention"/>
+    <collection property="checkItemList"
+                javaType="ArrayList"
+                ofType="com.itheima.POJO.CheckItem"
+                column="id"
+                select="com.itheima.dao.CheckItemDao.findCheckItemsByCheckGroupId"/>
+</resultMap>
+<select id="findCheckGroupsBySetMealId" resultMap="testFindCheckItemsByCheckGroupId">
+    select * from t_checkgroup where id in
+    (select checkgroup_id from t_setmeal_checkgroup where setmeal_id = #{setMealId})
+</select>
+```
+
+
+
+3. 检查项
+
+Dao.java
+
+```java
+// 测试多表
+public List<CheckItem> findCheckItemsByCheckGroupId(Integer checkGroupId);
+```
+
+Dao.xml
+
+```xml
+<!--测试多表-->
+<select id="findCheckItemsByCheckGroupId" resultType="com.itheima.POJO.CheckItem">
+    select * from t_checkitem where id in
+    (select checkitem_id from t_checkgroup_checkitem where checkgroup_id = #{checkGroupId})
+</select>
+```
+
+
+
+#### 阿里云短信
+
+工具类
+
+```java
+public class SMSUtils {
+   public static final String VALIDATE_CODE = "SMS_159620392";//发送短信验证码   模板Code
+   public static final String ORDER_NOTICE = "SMS_159771588";//体检预约成功通知  模板Code
+    ......
+```
+
+
+
+### 页面静态化
+
+- Freemarker 
+
+> FreeMarker是一个用Java 语言编写的模板引擎，它基于模板来生成文本输出。FreeMarker与Web容器无关，即在Web运行时，它并不知道 Servlet或HTTP。它不仅可以用作表现层的实现技术，而且还可以用于生成XML，JSP或Java等。
+
+- 作用：
+
+FreeMarker 是一个用Java 语言编写的模板引擎，它基于模板来生成文本输出。FreeMarker与Web容器无关，即在Web运行时，它并不知道Servlet或HTTP。它不仅可以用作表现层的实现技术，而且还可以用于生成XML，JSP或Java等。
+
+- 依赖：
+
+```xml
+<dependency>
+  <groupId>org.freemarker</groupId>
+  <artifactId>freemarker</artifactId>
+  <version>2.3.28</version>
+</dependency>
+```
+
+- 模板文件中有四种元素：
+  1、文本，直接输出的部分
+  2、注释，即<#--  xxx  -->格式不会输出
+  3、插值（Interpolation）：即${...}部分，将使用数据模型中的部分替代输出
+
+  4、FTL指令：FreeMarker指令，和HTML标记类似，名字前加#予以区分，不会输出Freemarker的模板文件后缀可以任意，一般建议为ftl。 
+
+#### 快速入门
+
+1. test.ftl
+
+```
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <#-- 我是一个注释，不会有任何输出 -->
+  ${name} 你好，${msg}
+<body>
+</html>
+```
+
+2. test.java
+
+```java
+public static void main(String[] args) throws IOException, TemplateException {
+//        1. 创建配置类
+        Configuration configuration = new Configuration(Configuration.getVersion());
+//        2. 设置目录
+        configuration.setDirectoryForTemplateLoading(new File("E:\\code\\ftl\\template"));
+//        3. 设置编码
+        configuration.setDefaultEncoding("utf-8");
+//        4. 加载模板文件
+        Template template = configuration.getTemplate("test.ftl");
+//        5. 创建数据对象
+        HashMap<String, String> map = new HashMap<>();
+        map.put("name", "陈");
+        map.put("msg", "早上好");
+//        6. 创建导出文件输出流类
+        FileWriter fileWriter = new FileWriter("E:\\code\\ftl\\static\\test.html");
+//        7. 写入数据导出
+        template.process(map, fileWriter);
+//        8. 关闭文件输出流类
+        fileWriter.close();
+    }
+```
+
+
+
+#### 指令
+
+- assign
+
+1. 简单类型
+
+```
+<#assign linkman="周先生">
+联系人：${linkman}
+```
+
+2. 对象类型
+
+```
+<#assign user={"name": "陈", "age": 18}>
+姓名：${user.name}
+年龄：${user.age}
+```
+
+- include
+
+  引入其它模板
+
+```
+<#include "head.ftl">
+```
+
+- if
+
+  注意：最后的 `if` 要斜杠。判断中，可以使用单等号，也可以是双等号
+
+```
+<#if gender==1>
+  <span>男</span>
+<#elseif gender==2>
+  <span>女</span>
+<#else>
+  <span>保密<span>
+</#if>
+```
+
+- list
+
+语法：
+
+```
+<#list 集合 as 单项>
+</#list>
+```
+
+例子：
+
+```html
+<#list user as users>
+	姓名：${user.name}
+	年龄：${user.age}
+	<br>
+</#list>
+```
+
+后台数据代码
+
+```java
+HashMap data = new HashMap<>();
+// 添加性别对象
+data.put("gender", 0);
+// 生成遍历对象
+ArrayList users = new ArrayList();
+HashMap user1 = new HashMap();
+user1.put("name", "小明");
+user1.put("age", "18");
+users.add(user1);
+HashMap user2 = new HashMap();
+user2.put("name", "小红");
+user2.put("age", "18");
+users.add(user2);
+// 添加遍历对象
+data.put("users", users);
+```
+
+**注意map的key和ftl的要对应好！**
+
+
+
+#### 解决null
+
+在插值后面加入 `!`
+
+```
+${user.name!} 你好，${user.age!}
+```
+
+
+
+#### 生成静态代码
+
+- 当套餐数据发生改变时，需要生成静态页面，即我们通过后台系统修改套餐数据（包括新增、删除、编辑）时。
+- 如果是在开发阶段可以将文件生成到项目工程中，如果上线后可以将文件生成到移动端系统运行的tomcat中。
+- 套餐列表只需要一个页面就可以了，在这个页面中展示所有的套餐列表数据即可。套餐详情页面需要有多个，即一个套餐应该对应一个静态页面。
+
+在health_service_provider工程的WEB-INF目录创建tl目录，在ftl目录中创建模板文件mobile_setmeal.ftl和mobile_setmeal_detail.ftl文件，前者是用于生成套餐列表页面的模板文件，后者是生成套餐详情页面的模板文件
+
+
+
+#### 传智健康页面静态化
+
+1. 创建health_service_provider\src\main\resources\freemarker.properties
+
+```
+out_put_path=C:\\Users\\48536\\IdeaProjects\\SSM\\itcast_health\\health_parent\\health_mobile\\src\\main\\webapp\\pages
+```
+
+2. health_service_provider\src\main\resources\spring-service.xml里配置freemarker
+
+```xml
+<!--    freemarker配置-->
+    <bean id="freemarkerConfig"
+          class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+<!--        指定模板地址-->
+        <property name="templateLoaderPath" value="/WEB-INF/ftl"/>
+<!--        指定编码格式-->
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+<!--    加载属性文件-->
+    <context:property-placeholder location="classpath:freemarker.properties"/>
+```
+
+3. SetMealServiceImpl.java
+
+```java
+@Autowired
+private FreeMarkerConfigurer freeMarkerConfigurer;
+
+@Value("${out_put_path}")
+private String outPutPath;
+
+public Result add\update\delete() {
+    ....
+    this.generateMobileStaticHtml();  // 添加、更新、删除套餐时生成静态页面
+}
+   
+//    生成静态页面方法，公开的，数据有改变就调用这个函数
+    public void generateMobileStaticHtml() {
+        List<Setmeal> setmealList = this.getSetMeal();
+//        生成套餐静态页面
+        generateMobileSetMealListHtml(setmealList);
+//        生成套餐详情页面
+        generateMobileSetMealDetailHtml(setmealList);
+    }
+
+    private void generateMobileSetMealDetailHtml(List<Setmeal> setmealList) {
+        for (Setmeal setmeal : setmealList) {
+            Integer id = setmeal.getId();
+            HashMap<String, Object> map = new HashMap<>();
+            Setmeal one = this.findMobileOneById(id);
+            map.put("setMeal", one);
+            this.generateHtml("setmeal_detail.ftl", "setmeal_detail_" + id + ".html", map);
+        }
+    }
+
+    private void generateMobileSetMealListHtml(List<Setmeal> setmealList) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("setMealList", setmealList);
+        this.generateHtml("setmeal.ftl", "setmeal.html", map);
+    }
+
+    private void generateHtml(String templateName, String outName, HashMap<String, Object> map) {
+        Configuration configuration = freeMarkerConfigurer.getConfiguration();
+        Writer out = null;
+        try {
+            Template template = configuration.getTemplate(templateName);
+            FileWriter fileWriter = new FileWriter(outPutPath + "\\" + outName);
+            template.process(map, fileWriter);
+            fileWriter.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+```
+
+
+
+#### Redis使用有效期集合
+
+- 设置
+
+```
+Reids.getResources.setex(key, 秒, value);
+```
+
+- 获取
+
+```
+Redis.getResource.get(key);
+```
+
+
+
+### 权限控制
+
